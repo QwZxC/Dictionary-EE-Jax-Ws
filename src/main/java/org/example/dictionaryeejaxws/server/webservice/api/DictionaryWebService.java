@@ -1,5 +1,6 @@
 package org.example.dictionaryeejaxws.server.webservice.api;
 
+import org.example.dictionaryeejaxws.server.dto.SoapResponse;
 import org.example.dictionaryeejaxws.server.dto.WordDto;
 import org.example.dictionaryeejaxws.server.dto.XmlWords;
 import org.example.dictionaryeejaxws.server.entity.DictionaryType;
@@ -18,9 +19,9 @@ public interface DictionaryWebService {
     @WebMethod
     Word getTranslation(String value);
     @WebMethod
-    void createWord(WordDto dto);
+    SoapResponse createWord(WordDto dto);
     @WebMethod
-    void updateTranslation(WordDto dto);
+    SoapResponse updateTranslation(WordDto dto);
     @WebMethod
-    void deleteWord(WordDto dto);
+    SoapResponse deleteWord(WordDto dto);
 }

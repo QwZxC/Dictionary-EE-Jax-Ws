@@ -1,7 +1,8 @@
 package org.example.dictionaryeejaxws.server.webservice.impl;
 
-import org.example.dictionaryeejaxws.server.dto.XmlWords;
+import org.example.dictionaryeejaxws.server.dto.SoapResponse;
 import org.example.dictionaryeejaxws.server.dto.WordDto;
+import org.example.dictionaryeejaxws.server.dto.XmlWords;
 import org.example.dictionaryeejaxws.server.entity.DictionaryType;
 import org.example.dictionaryeejaxws.server.entity.Word;
 import org.example.dictionaryeejaxws.server.service.api.DictionaryService;
@@ -11,15 +12,13 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 @WebService(endpointInterface = "org.example.dictionaryeejaxws.server.webservice.api.DictionaryWebService")
 @Stateless
 public class DictionaryWebServiceImpl implements DictionaryWebService {
 
+    private static final String SUCCESS = "Successfully";
     @EJB
     private DictionaryService dictionaryService;
 
@@ -28,28 +27,26 @@ public class DictionaryWebServiceImpl implements DictionaryWebService {
         return dictionaryService.findWords(type);
     }
 
-    @Produces(MediaType.APPLICATION_XML)
     @Override
     public Word getTranslation(@QueryParam("value") String value) {
         return dictionaryService.findTranslation(value);
     }
 
-    @Produces(MediaType.APPLICATION_XML)
     @Override
-    public void createWord(WordDto dto) {
+    public SoapResponse createWord(WordDto dto) {
         dictionaryService.createWord(dto);
+        return new SoapResponse(SUCCESS);
     }
 
-    @Produces(MediaType.APPLICATION_XML)
     @Override
-    public void updateTranslation(WordDto dto) {
+    public SoapResponse updateTranslation(WordDto dto) {
         dictionaryService.updateWord(dto);
+        return new SoapResponse(SUCCESS);
     }
 
-    @Produces(MediaType.APPLICATION_XML)
     @Override
-    public void deleteWord(WordDto dto) {
+    public SoapResponse deleteWord(WordDto dto) {
         dictionaryService.deleteWord(dto);
+        return new SoapResponse(SUCCESS);
     }
-
 }
