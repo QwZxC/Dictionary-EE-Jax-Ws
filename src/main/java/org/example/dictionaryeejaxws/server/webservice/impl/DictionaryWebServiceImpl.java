@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.QueryParam;
+import java.time.LocalDate;
 
 @WebService(endpointInterface = "org.example.dictionaryeejaxws.server.webservice.api.DictionaryWebService")
 @Stateless
@@ -35,18 +36,18 @@ public class DictionaryWebServiceImpl implements DictionaryWebService {
     @Override
     public SoapResponse createWord(WordDto dto) {
         dictionaryService.createWord(dto);
-        return new SoapResponse(SUCCESS);
+        return new SoapResponse("Успешно добавлено", LocalDate.now(), SUCCESS);
     }
 
     @Override
     public SoapResponse updateTranslation(WordDto dto) {
         dictionaryService.updateWord(dto);
-        return new SoapResponse(SUCCESS);
+        return new SoapResponse("Успешно обновлено", LocalDate.now(), SUCCESS);
     }
 
     @Override
     public SoapResponse deleteWord(WordDto dto) {
         dictionaryService.deleteWord(dto);
-        return new SoapResponse(SUCCESS);
+        return new SoapResponse("Успешно удалено", LocalDate.now(), SUCCESS);
     }
 }

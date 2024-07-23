@@ -100,7 +100,7 @@
                 </executions>
                 <configuration>
                     <wsdlUrls>
-                        <wsdlUrl>http://localhost:8080/Dictionary-EE-Jax-Ws-1.0-SNAPSHOT/DictionaryWebServiceImpl?wsdl</wsdlUrl>
+                        <wsdlUrl>http://localhost:1986/wss/dictionary?wsdl</wsdlUrl>
                     </wsdlUrls>
                     <wsdlDirectory>${project.basedir}/src/main/java/org/example/dictionaryeejaxws/server</wsdlDirectory>
                     <packageName>org.example.dictionaryeejaxws.server</packageName>
