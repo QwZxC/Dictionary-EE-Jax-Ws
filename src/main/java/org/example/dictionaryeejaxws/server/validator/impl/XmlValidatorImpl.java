@@ -13,6 +13,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Stateless
@@ -22,11 +23,15 @@ public class XmlValidatorImpl implements XmlValidator {
     private final Logger logger = Logger.getLogger(XmlValidatorImpl.class.getName());
 
     @PostConstruct
-    private void initValidator() throws SAXException {
+    private void initValidator() {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Source schemaFile = new StreamSource(getFile("META-INF/Words.xsd"));
-        Schema schema = factory.newSchema(schemaFile);
-        validator = schema.newValidator();
+        try {
+            Schema schema = factory.newSchema(schemaFile);
+            validator = schema.newValidator();
+        } catch (SAXException e) {
+            logger.log(Level.WARNING, e.getMessage());
+        }
     }
 
     private File getFile(String location) {
@@ -35,8 +40,8 @@ public class XmlValidatorImpl implements XmlValidator {
     }
 
     @Override
-    public void validate() throws IOException, SAXException {
-        validator.validate(new StreamSource(getFile("META-INF/Words.xml")));
+    public void validate(File file) throws IOException, SAXException {
+        validator.validate(new StreamSource(file));
         logger.info("Файл валиден");
     }
 }

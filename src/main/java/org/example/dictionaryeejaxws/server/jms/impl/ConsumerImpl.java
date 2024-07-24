@@ -1,12 +1,14 @@
 package org.example.dictionaryeejaxws.server.jms.impl;
 
+import org.example.dictionaryeejaxws.server.service.api.XmlService;
+
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.ejb.Stateless;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.ObjectMessage;
+import javax.jms.*;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,14 +20,23 @@ import java.util.logging.Logger;
 public class ConsumerImpl implements MessageListener {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    @EJB
+    private XmlService xmlService;
 
     @Override
     public void onMessage(Message message) {
         ObjectMessage objectMessage = (ObjectMessage) message;
+        logger.info("Принято сообщение");
+        processMessage(objectMessage);
+    }
+
+    private void processMessage(ObjectMessage message) {
+        logger.info("               Начата обработка файла               ");
         try {
-            logger.info("Received message: " + objectMessage.getObject());
-        } catch (JMSException e) {
+            xmlService.processXmlDoc((File) message.getObject());
+        } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage());
         }
+        logger.info("               Обработка файла закончена            ");
     }
 }

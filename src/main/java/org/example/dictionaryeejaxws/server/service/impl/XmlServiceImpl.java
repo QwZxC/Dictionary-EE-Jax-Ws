@@ -12,6 +12,11 @@ import javax.ejb.Stateless;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -33,13 +38,21 @@ public class XmlServiceImpl implements XmlService {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         File file = getXmlDoc();
         marshaller.marshal(words, file);
-        marshaller.marshal(words, System.out);
-        validator.validate();
+        validator.validate(file);
         logger.info("XML-файл создан");
     }
 
     @Override
     public File getXmlDoc() {
         return  new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/Words.xml").getFile());
+    }
+
+    @Override
+    public void processXmlDoc(File file) throws TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        File toWrite = new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/WordsConsumed.xml").getFile());
+        File xsl = new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/Words.xsl").getFile());
+        Transformer transformer = tf.newTransformer(new StreamSource(xsl));
+        transformer.transform(new StreamSource(file), new StreamResult(toWrite));
     }
 }

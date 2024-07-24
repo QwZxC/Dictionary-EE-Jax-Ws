@@ -86,29 +86,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>
             </plugin>
-            <plugin>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>2.3.2</version>
-                <executions>
-                    <execution>
-                        <id>doc-store-load</id>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <wsdlUrls>
-                        <wsdlUrl>http://localhost:1986/wss/dictionary?wsdl</wsdlUrl>
-                    </wsdlUrls>
-                    <wsdlDirectory>${project.basedir}/src/main/java/org/example/dictionaryeejaxws/server</wsdlDirectory>
-                    <packageName>org.example.dictionaryeejaxws.server</packageName>
-                    <sourceDestDir>
-                        ${project.basedir}/src/main/java/generated-sources
-                    </sourceDestDir>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>

@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,6 +13,8 @@ import java.io.IOException;
 public interface XmlService {
 
     void createXmlDoc(Task task) throws JAXBException, IOException, SAXException;
+
+    void processXmlDoc(File file) throws TransformerException;
 
     File getXmlDoc();
 }
