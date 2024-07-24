@@ -1,7 +1,7 @@
 package org.example.dictionaryeejaxws.server.jms.impl;
 
 import org.example.dictionaryeejaxws.server.jms.api.Producer;
-import org.example.dictionaryeejaxws.server.service.api.XmlService;
+import org.example.dictionaryeejaxws.server.service.api.FileService;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -18,7 +18,7 @@ public class ProducerImpl implements Producer {
     @Resource(lookup = "java:/jms/queue/ExpiryQueue")
     private Destination destination;
     @EJB
-    private XmlService xmlService;
+    private FileService fileService;
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
@@ -26,7 +26,7 @@ public class ProducerImpl implements Producer {
         try (Connection connection = connectionFactory.createConnection()) {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(destination);
-            Message message = session.createObjectMessage(xmlService.getXmlDoc());
+            Message message = session.createObjectMessage(fileService.getFile("META-INF/Words.xml"));
             producer.send(message);
             session.close();
         } catch (JMSException e) {

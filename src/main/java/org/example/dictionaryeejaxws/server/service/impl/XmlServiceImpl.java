@@ -3,6 +3,7 @@ package org.example.dictionaryeejaxws.server.service.impl;
 import org.example.dictionaryeejaxws.server.dto.XmlWords;
 import org.example.dictionaryeejaxws.server.entity.Task;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
+import org.example.dictionaryeejaxws.server.service.api.FileService;
 import org.example.dictionaryeejaxws.server.service.api.XmlService;
 import org.example.dictionaryeejaxws.server.validator.api.XmlValidator;
 import org.xml.sax.SAXException;
@@ -28,6 +29,8 @@ public class XmlServiceImpl implements XmlService {
     private DictionaryRepository dictionaryRepository;
     @EJB
     private XmlValidator validator;
+    @EJB
+    private FileService fileService;
     private static final Logger logger = Logger.getLogger(XmlServiceImpl.class.getName());
 
     @Override
@@ -36,7 +39,7 @@ public class XmlServiceImpl implements XmlService {
         JAXBContext jaxbContext = JAXBContext.newInstance(XmlWords.class);
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        File file = getXmlDoc();
+        File file = fileService.getFile("META-INF/Words.xml");
         marshaller.marshal(words, file);
         validator.validate(file);
         logger.info("XML-файл создан");
@@ -44,14 +47,14 @@ public class XmlServiceImpl implements XmlService {
 
     @Override
     public File getXmlDoc() {
-        return  new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/Words.xml").getFile());
+        return fileService.getFile("");
     }
 
     @Override
     public void processXmlDoc(File file) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
-        File toWrite = new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/WordsConsumed.xml").getFile());
-        File xsl = new File(Thread.currentThread().getContextClassLoader().getResource("META-INF/Words.xsl").getFile());
+        File toWrite = fileService.getFile("META-INF/WordsConsumed.xml");
+        File xsl = fileService.getFile("META-INF/Words.xsl");
         Transformer transformer = tf.newTransformer(new StreamSource(xsl));
         transformer.transform(new StreamSource(file), new StreamResult(toWrite));
     }

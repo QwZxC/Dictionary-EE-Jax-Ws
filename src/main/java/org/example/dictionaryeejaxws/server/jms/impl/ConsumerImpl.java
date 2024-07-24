@@ -2,7 +2,6 @@ package org.example.dictionaryeejaxws.server.jms.impl;
 
 import org.example.dictionaryeejaxws.server.service.api.XmlService;
 
-import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
@@ -31,7 +30,7 @@ public class ConsumerImpl implements MessageListener {
     }
 
     private void processMessage(ObjectMessage message) {
-        logger.info("               Начата обработка файла               ");
+        logger.info("               Начата обработка файла             ");
         try {
             xmlService.processXmlDoc((File) message.getObject());
         } catch (Exception e) {
