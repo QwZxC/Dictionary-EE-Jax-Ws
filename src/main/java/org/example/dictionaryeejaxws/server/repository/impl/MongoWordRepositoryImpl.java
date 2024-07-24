@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.example.dictionaryeejaxws.server.entity.Word;
 import org.example.dictionaryeejaxws.server.mongo.MongoClientProvider;
@@ -45,22 +46,38 @@ public class MongoWordRepositoryImpl implements MongoWordRepository {
     }
 
     @Override
-    public void saveWord(Word word) {
-        //TODO
-    }
-
-    @Override
     public void updateWord(Word word) {
-        //TODO
+        MongoClient mongoClient = mongoClientProvider.getMongoClient();
+        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
+        MongoCollection<Document> collection = db.getCollection("words");
+        collection.updateOne(new Document("id", word.getId()),
+                new Document("$set", new Document("translation", word.getTranslation())));
+        try (MongoCursor<Document> cursor = collection.find().iterator()) {
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                var words = new ArrayList<>(doc.values());
+            }
+        }
     }
 
     @Override
     public void deleteWord(Word word) {
-        //TODO
+        MongoClient mongoClient = mongoClientProvider.getMongoClient();
+        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
+        MongoCollection<Document> collection = db.getCollection("words");
+        collection.deleteOne(Filters.eq("id", word.getId()));
     }
 
     @Override
     public void createWord(Word word) {
-        //TODO
+        MongoClient mongoClient = mongoClientProvider.getMongoClient();
+        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
+        MongoCollection<Document> collection = db.getCollection("words");
+        Document doc = new Document("id", word.getId());
+        doc.append("value", word.getValue())
+                .append("translation", word.getTranslation())
+                .append("dictionary-type", word.getDictionaryType().toString())
+                .append("creation-date", word.getCreationDate());
+        collection.insertOne(doc);
     }
 }

@@ -34,7 +34,9 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public void createWord(WordDto word) {
-        dictionaryRepository.createWord(WordMapper.toEntity(word));
+        Word newWord = WordMapper.toEntity(word);
+        dictionaryRepository.createWord(newWord);
+        mongoWordRepository.createWord(newWord);
     }
 
     @Override
@@ -44,6 +46,8 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public void deleteWord(WordDto word) {
-        dictionaryRepository.deleteWord(WordMapper.toEntity(word));
+        Word oldWord = dictionaryRepository.findWordByValue(word.getValue());
+        dictionaryRepository.deleteWord(oldWord);
+        mongoWordRepository .deleteWord(oldWord);
     }
 }
