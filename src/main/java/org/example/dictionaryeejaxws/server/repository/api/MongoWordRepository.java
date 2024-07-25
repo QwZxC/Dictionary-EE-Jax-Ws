@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MongoWordRepository {
 
-    void findAllWords();
+    List<Word> findAllWords();
     List<Word> findAllWordsByValue(String value);
     Word findWordById(String id);
     void updateWord(Word word);

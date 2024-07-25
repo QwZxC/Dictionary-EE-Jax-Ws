@@ -2,11 +2,11 @@ package org.example.dictionaryeejaxws.server.repository.impl;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.example.dictionaryeejaxws.server.entity.Word;
+import org.example.dictionaryeejaxws.server.mapper.WordMapper;
 import org.example.dictionaryeejaxws.server.mongo.MongoClientProvider;
 import org.example.dictionaryeejaxws.server.repository.api.MongoWordRepository;
 
@@ -23,45 +23,62 @@ public class MongoWordRepositoryImpl implements MongoWordRepository {
     private MongoClientProvider mongoClientProvider;
     private static final String DB_NAME = "DictionaryDb";
     private static final String COLLECTION_NAME = "words";
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = Logger.getLogger("MongoWordRepositoryImpl");
 
     @Override
-    public void findAllWords() {
+    public List<Word> findAllWords() {
+        logger.info("Запрос на выборку всех слов из MongoDb");
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
         MongoDatabase db = mongoClient.getDatabase(DB_NAME);
         MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
-        try (MongoCursor<Document> cursor = collection.find().iterator()) {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                var word = new ArrayList<>(doc.values());
-                String bson = String.format("%s: %s%n %s", word.get(1), word.get(2), word.get(3).getClass().getName());
-                logger.info(bson);
-            }
+        List<Document> result = collection.find().into(new ArrayList<>());
+        return getResultList(result);
+    }
+
+    private List<Word> getResultList(List<Document> result) {
+        List<Word> words = new ArrayList<>();
+        for (Document document : result) {
+            document.toJson();
+            words.add(WordMapper.deserializeWord(document.toJson()));
         }
+        return words;
     }
 
     @Override
     public List<Word> findAllWordsByValue(String value) {
-        return List.of();
+        logger.info("Запрос на выборку всех слов подходящих по значению из MongoDb");
+        MongoClient mongoClient = mongoClientProvider.getMongoClient();
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
+        Document filter = new Document("value", value);
+        ArrayList<Document> result = collection.find(filter).into(new ArrayList<>());
+        return getResultList(result);
     }
 
     @Override
     public Word findWordById(String id) {
-        return null;
+        logger.info("Запрос на выборку всех слов подходящих по id из MongoDb");
+        MongoClient mongoClient = mongoClientProvider.getMongoClient();
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
+        Document filter = new Document("id", id);
+        ArrayList<Document> result = collection.find(filter).into(new ArrayList<>());
+        return WordMapper.deserializeWord(result.get(0).toJson());
     }
 
     @Override
     public void updateWord(Word word) {
+        logger.info("Запрос на обновление слова в MongoDb");
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
         MongoDatabase db = mongoClient.getDatabase(DB_NAME);
         MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
         collection.updateOne(new Document("id", word.getId()),
                 new Document("$set", new Document("translation", word.getTranslation())));
-
     }
 
     @Override
     public void deleteWord(Word word) {
+        logger.info("Запрос на удаление слова в MongoDb");
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
         MongoDatabase db = mongoClient.getDatabase(DB_NAME);
         MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
@@ -70,6 +87,7 @@ public class MongoWordRepositoryImpl implements MongoWordRepository {
 
     @Override
     public void createWord(Word word) {
+        logger.info("Запрос на создание слова в MongoDb");
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
         MongoDatabase db = mongoClient.getDatabase(DB_NAME);
         MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);

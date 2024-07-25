@@ -1,5 +1,6 @@
 package org.example.dictionaryeejaxws.server.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.example.dictionaryeejaxws.server.adapter.LocalDateAdapter;
 
 import javax.persistence.*;
@@ -8,13 +9,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity(name = "word")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
-public class Word {
+public class Word implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +34,13 @@ public class Word {
     @Enumerated(EnumType.STRING)
     @Column(name = "dictionaryType", nullable = false)
     @XmlElement(name = "dictionary-type", namespace = "Words.xsd")
+    @JsonProperty("dictionary-type")
     private DictionaryType dictionaryType;
 
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     @Column(name = "creationDate", nullable = false)
     @XmlElement(name = "creation-date", namespace = "Words.xsd")
+    @JsonProperty("creation-date")
     private LocalDate creationDate;
 
     public Word() {
