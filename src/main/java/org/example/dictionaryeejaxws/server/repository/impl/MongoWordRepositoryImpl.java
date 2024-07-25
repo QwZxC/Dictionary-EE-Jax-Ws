@@ -14,23 +14,28 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Stateless
 public class MongoWordRepositoryImpl implements MongoWordRepository {
 
     @EJB
     private MongoClientProvider mongoClientProvider;
+    private static final String DB_NAME = "DictionaryDb";
+    private static final String COLLECTION_NAME = "words";
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Override
     public void findAllWords() {
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
-        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
-        MongoCollection<Document> collection = db.getCollection("words");
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
         try (MongoCursor<Document> cursor = collection.find().iterator()) {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
                 var word = new ArrayList<>(doc.values());
-                System.out.printf("%s: %s%n %s", word.get(1), word.get(2), word.get(3).getClass().getName());
+                String bson = String.format("%s: %s%n %s", word.get(1), word.get(2), word.get(3).getClass().getName());
+                logger.info(bson);
             }
         }
     }
@@ -48,31 +53,26 @@ public class MongoWordRepositoryImpl implements MongoWordRepository {
     @Override
     public void updateWord(Word word) {
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
-        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
-        MongoCollection<Document> collection = db.getCollection("words");
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
         collection.updateOne(new Document("id", word.getId()),
                 new Document("$set", new Document("translation", word.getTranslation())));
-        try (MongoCursor<Document> cursor = collection.find().iterator()) {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                var words = new ArrayList<>(doc.values());
-            }
-        }
+
     }
 
     @Override
     public void deleteWord(Word word) {
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
-        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
-        MongoCollection<Document> collection = db.getCollection("words");
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
         collection.deleteOne(Filters.eq("id", word.getId()));
     }
 
     @Override
     public void createWord(Word word) {
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
-        MongoDatabase db = mongoClient.getDatabase("DictionaryDb");
-        MongoCollection<Document> collection = db.getCollection("words");
+        MongoDatabase db = mongoClient.getDatabase(DB_NAME);
+        MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
         Document doc = new Document("id", word.getId());
         doc.append("value", word.getValue())
                 .append("translation", word.getTranslation())

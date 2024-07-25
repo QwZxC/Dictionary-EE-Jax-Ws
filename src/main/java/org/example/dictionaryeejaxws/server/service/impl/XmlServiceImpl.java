@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -53,6 +54,9 @@ public class XmlServiceImpl implements XmlService {
     @Override
     public void processXmlDoc(File file) throws TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();
+        tf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         File toWrite = fileService.getFile("META-INF/WordsConsumed.xml");
         File xsl = fileService.getFile("META-INF/Words.xsl");
         Transformer transformer = tf.newTransformer(new StreamSource(xsl));

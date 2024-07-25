@@ -8,6 +8,10 @@ import java.util.List;
 
 public class WordMapper {
 
+    private WordMapper() {
+
+    }
+
     public static List<WordDto> toDtos(List<Word> words) {
         List<WordDto> dtos = new ArrayList<>(words.size());
         words.forEach(word -> dtos.add(new WordDto(word.getValue(), word.getTranslation(), word.getDictionaryType())));
