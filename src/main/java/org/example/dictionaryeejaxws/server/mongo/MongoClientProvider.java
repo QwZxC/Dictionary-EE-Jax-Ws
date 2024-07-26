@@ -4,8 +4,9 @@ import com.mongodb.MongoClient;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.*;
+import javax.enterprise.context.ApplicationScoped;
 
-@Singleton
+@ApplicationScoped
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class MongoClientProvider {
 

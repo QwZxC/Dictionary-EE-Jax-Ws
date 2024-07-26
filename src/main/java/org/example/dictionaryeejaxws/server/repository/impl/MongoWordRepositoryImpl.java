@@ -12,18 +12,20 @@ import org.example.dictionaryeejaxws.server.mongo.MongoClientProvider;
 import org.example.dictionaryeejaxws.server.qualifier.MongoRepositoryAnnotation;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-@Stateless
 @MongoRepositoryAnnotation
+@ApplicationScoped
+@Named("MongoRepository")
 public class MongoWordRepositoryImpl implements DictionaryRepository {
 
-    @EJB
+    @Inject
     private MongoClientProvider mongoClientProvider;
     private static final String DB_NAME = "DictionaryDb";
     private static final String COLLECTION_NAME = "words";
@@ -36,7 +38,7 @@ public class MongoWordRepositoryImpl implements DictionaryRepository {
         MongoClient mongoClient = mongoClientProvider.getMongoClient();
         MongoDatabase db = mongoClient.getDatabase(DB_NAME);
         MongoCollection<Document> collection = db.getCollection(COLLECTION_NAME);
-        Document filter = new Document("dictionary-type", type);
+        Document filter = new Document("dictionary-type", type.toString());
         List<Document> result = collection.find(filter).into(new ArrayList<>());
         return getResultList(result);
     }

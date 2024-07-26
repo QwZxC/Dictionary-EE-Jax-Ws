@@ -10,6 +10,8 @@ import org.xml.sax.SAXException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,7 +28,8 @@ import java.util.logging.Logger;
 @Stateless
 public class XmlServiceImpl implements XmlService {
 
-    @EJB
+    @Inject
+    @Named("JpaRepository")
     private DictionaryRepository dictionaryRepository;
     @EJB
     private XmlValidator validator;

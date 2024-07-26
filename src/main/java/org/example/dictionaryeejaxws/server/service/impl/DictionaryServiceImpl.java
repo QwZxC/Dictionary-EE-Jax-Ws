@@ -5,23 +5,27 @@ import org.example.dictionaryeejaxws.server.dto.XmlWords;
 import org.example.dictionaryeejaxws.server.entity.DictionaryType;
 import org.example.dictionaryeejaxws.server.entity.Word;
 import org.example.dictionaryeejaxws.server.mapper.WordMapper;
-import org.example.dictionaryeejaxws.server.qualifier.JpaRepositoryAnnotation;
-import org.example.dictionaryeejaxws.server.qualifier.MongoRepositoryAnnotation;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
 import org.example.dictionaryeejaxws.server.service.api.DictionaryService;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Stateless
 public class DictionaryServiceImpl implements DictionaryService {
 
+    private final DictionaryRepository dictionaryRepository;
+    private final DictionaryRepository mongoWordRepository;
+
     @Inject
-    @JpaRepositoryAnnotation
-    private DictionaryRepository dictionaryRepository;
-    @Inject
-    @MongoRepositoryAnnotation
-    private DictionaryRepository mongoWordRepository;
+    public DictionaryServiceImpl(
+            @Named("JpaRepository") DictionaryRepository dictionaryRepository,
+            @Named("MongoRepository") DictionaryRepository mongoWordRepository
+    ) {
+        this.dictionaryRepository = dictionaryRepository;
+        this.mongoWordRepository = mongoWordRepository;
+    }
 
     @Override
     public XmlWords findWords(DictionaryType type) {
@@ -51,6 +55,6 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void deleteWord(WordDto word) {
         Word oldWord = dictionaryRepository.findWordByValue(word.getValue());
         dictionaryRepository.deleteWord(oldWord);
-        mongoWordRepository .deleteWord(oldWord);
+        mongoWordRepository.deleteWord(oldWord);
     }
 }

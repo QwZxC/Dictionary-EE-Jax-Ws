@@ -5,15 +5,17 @@ import org.example.dictionaryeejaxws.server.entity.Word;
 import org.example.dictionaryeejaxws.server.qualifier.JpaRepositoryAnnotation;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
 @JpaRepositoryAnnotation
+@Named("JpaRepository")
 public class DictionaryRepositoryImpl implements DictionaryRepository {
 
     private static final String VALUE_PARAM = "value";
