@@ -5,24 +5,27 @@ import org.example.dictionaryeejaxws.server.dto.XmlWords;
 import org.example.dictionaryeejaxws.server.entity.DictionaryType;
 import org.example.dictionaryeejaxws.server.entity.Word;
 import org.example.dictionaryeejaxws.server.mapper.WordMapper;
+import org.example.dictionaryeejaxws.server.qualifier.JpaRepositoryAnnotation;
+import org.example.dictionaryeejaxws.server.qualifier.MongoRepositoryAnnotation;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
-import org.example.dictionaryeejaxws.server.repository.api.MongoWordRepository;
 import org.example.dictionaryeejaxws.server.service.api.DictionaryService;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 @Stateless
 public class DictionaryServiceImpl implements DictionaryService {
 
-    @EJB
+    @Inject
+    @JpaRepositoryAnnotation
     private DictionaryRepository dictionaryRepository;
-    @EJB
-    private MongoWordRepository mongoWordRepository;
+    @Inject
+    @MongoRepositoryAnnotation
+    private DictionaryRepository mongoWordRepository;
 
     @Override
     public XmlWords findWords(DictionaryType type) {
-        mongoWordRepository.findAllWords();
+        mongoWordRepository.findWords(type);
         return new XmlWords(dictionaryRepository.findWords(type));
     }
 

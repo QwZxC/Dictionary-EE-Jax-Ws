@@ -2,6 +2,7 @@ package org.example.dictionaryeejaxws.server.repository.impl;
 
 import org.example.dictionaryeejaxws.server.entity.DictionaryType;
 import org.example.dictionaryeejaxws.server.entity.Word;
+import org.example.dictionaryeejaxws.server.qualifier.JpaRepositoryAnnotation;
 import org.example.dictionaryeejaxws.server.repository.api.DictionaryRepository;
 
 import javax.ejb.Stateless;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Stateless
+@JpaRepositoryAnnotation
 public class DictionaryRepositoryImpl implements DictionaryRepository {
 
     private static final String VALUE_PARAM = "value";
